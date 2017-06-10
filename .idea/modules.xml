@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/chip8emulator.iml" filepath="$PROJECT_DIR$/.idea/modules/chip8emulator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/chip8emulator_main.iml" filepath="$PROJECT_DIR$/.idea/modules/chip8emulator_main.iml" group="chip8emulator" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/chip8emulator_test.iml" filepath="$PROJECT_DIR$/.idea/modules/chip8emulator_test.iml" group="chip8emulator" />
+    </modules>
+  </component>
+</project>
