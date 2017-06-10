@@ -1,6 +1,14 @@
 package hr.mvukic.chip8emu.views
 
 import hr.mvukic.chip8emu.controllers.ChipController
+import hr.mvukic.chip8emu.enums.ChipStatus
+import javafx.beans.Observable
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.value.ObservableValue
+import javafx.event.EventHandler
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
+import javafx.scene.input.KeyCombination
 import javafx.stage.FileChooser
 import tornadofx.*
 import tornadofx.FX.Companion.find
@@ -13,51 +21,73 @@ import java.io.File
 class ChipView : View(title = "Chip 8 Emulator") {
 
     val chip : ChipController by inject()
+    var status = SimpleStringProperty("Init")
 
     override val root = borderpane {
         setMinSize(800.0,600.0)
         top = menubar {
             menu("File") {
-                item("Load ROM"){
-                    shortcut("Ctrl+l"){
-                        chip.loadRom()
-                    }
+                item("Load ROM") {
+                    accelerator = KeyCombination.valueOf("ctrl+l")
                     action {
-                        val file:List<File> = chooseFile(title="Load ROM file",filters = chip.fileFilters())
-                        file.forEach { println(it.name) }
+                        val files: List<File> = chooseFile(title = "Load ROM file", filters = chip.fileFilters())
+                        if (files.size == 1) {
+                            status.set("Loaded file: "+files.get(0).name)
+                            chip.loadRom(files.get(0))
+                        }
                     }
                 }
                 separator()
                 item("Quit"){
+                    accelerator = KeyCombination.valueOf("ctrl+q")
                     action {
                         println("Quitting.")
+
                     }
                 }
             }
             menu("Action"){
                 item("Start"){
+                    accelerator = KeyCombination.valueOf("ctrl+r")
                     action {
+                        status.set("Running...")
                         runAsync {
                             chip.run()
                         }
                     }
                 }
                 item("Halt"){
+                    accelerator = KeyCombination.valueOf("ctrl+h")
                     action {
+                        status.set("Stopped")
                         chip.halt()
                     }
                 }
             }
             menu("Disassemble") {
-                item("To file...")
                 item("To window"){
                     action{
-                        runAsync {
-
-                            chip.disassemble()
-                        } ui{
-                            find<DisassembleView>(mapOf("assembly" to it)).openModal()
+                        if(chip.status != ChipStatus.INIT){
+                            runAsync {
+                                chip.disassemble()
+                            } ui{
+                                find<DisassembleView>(mapOf("assembly" to it)).openModal()
+                            }
+                        }else{
+                            alert(Alert.AlertType.WARNING,"No ROM-s loaded","Please load a ROM file first!", ButtonType.OK)
                         }
+                    }
+                }
+            }
+            menu("Help"){
+                item("Keys"){
+                    action{
+                        println("Key bindings here")
+                    }
+                }
+                item("About"){
+                    action{
+                        find(AboutView::class).openModal()
                     }
                 }
             }
@@ -67,9 +97,8 @@ class ChipView : View(title = "Chip 8 Emulator") {
 
         }
 
-        bottom = label("Status") {
-            useMaxWidth = true
-
+        bottom = label{
+            textProperty().bindBidirectional(status)
         }
 
     }
