@@ -5,6 +5,7 @@ import javafx.stage.FileChooser
 import tornadofx.*
 import tornadofx.FX.Companion.find
 import tornadofx.find
+import java.io.File
 
 /**
  * Created by matija on 10.06.17..
@@ -22,9 +23,8 @@ class ChipView : View(title = "Chip 8 Emulator") {
                         chip.loadRom()
                     }
                     action {
-                        chooseFile(title="Load ROM file",filters = arrayOf()){
-                            println("chosen")
-                        }
+                        val file:List<File> = chooseFile(title="Load ROM file",filters = chip.fileFilters())
+                        file.forEach { println(it.name) }
                     }
                 }
                 separator()
