@@ -1,11 +1,6 @@
 package hr.mvukic.chip8emu
 
-import hr.mvukic.chip8emu.controllers.ChipController
 import hr.mvukic.chip8emu.views.ChipView
-import javafx.geometry.Pos
-import javafx.scene.control.Label
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import tornadofx.*
 

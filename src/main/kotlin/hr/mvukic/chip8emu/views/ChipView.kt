@@ -82,7 +82,7 @@ class ChipView : View(title = "Chip 8 Emulator") {
             menu("Help"){
                 item("Keys"){
                     action{
-                        println("Key bindings here")
+                        find<KeyBindongsView>(mapOf("keys" to chip.keys)).openModal()
                     }
                 }
                 item("About"){

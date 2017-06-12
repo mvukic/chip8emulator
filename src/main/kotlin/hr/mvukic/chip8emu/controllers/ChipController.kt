@@ -19,6 +19,12 @@ class ChipController : Controller(){
     var cpu: Cpu = Cpu()
     var disassembler :Disassembler = Disassembler()
     var status: ChipStatus = ChipStatus.INIT
+    val keys:Map<String,String> = mapOf(
+            "a" to "b",
+            "b" to "c",
+            "c" to "d",
+            "stop" to "ctrl+h",
+            "run" to "ctrl+r")
 
     fun loadRom(file: File){
         status = ChipStatus.WAITING

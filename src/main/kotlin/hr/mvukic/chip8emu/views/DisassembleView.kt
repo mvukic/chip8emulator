@@ -12,7 +12,7 @@ class DisassembleView : Fragment("Disassemble") {
     override val root = borderpane {
         setMinSize(400.0,400.0)
         center = textarea(assembly) {
-            selectAll()
+
         }
     }
 }
