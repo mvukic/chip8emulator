@@ -60,7 +60,11 @@ class OpcodeParser{
                 return Opcode(0,"$address","$higher$lower","add #$value, r$reg")
             }
             0x80 -> return Opcode(0,"$address","$higher$lower","with 8")
-            0x90 -> return Opcode(0,"$address","$higher$lower","with 9")
+            0x90 -> {
+                val reg1 = (hi and 0x0f).toHex()
+                val reg2 = ((lo.toPositiveInt() shl 4) and 0x0f)
+                return Opcode(0,"$address","$higher$lower","seq r$reg1,r$reg2")
+            }
             0xA0 -> {
                 val adr = (address and 0x0fff).toHex()
                 return Opcode(0,"$address","$higher$lower","mov I, #$adr")
@@ -69,9 +73,25 @@ class OpcodeParser{
                 val adr = (address and 0x0fff).toHex()
                 return Opcode(0,"$address","$higher$lower","jmp #($adr+[r0])")
             }
-            0xC0 -> return Opcode(0,"$address","$higher$lower","with C")
-            0xD0 -> return Opcode(0,"$address","$higher$lower","with D")
-            0xE0 -> return Opcode(0,"$address","$higher$lower","with E")
+            0xC0 -> {
+                val reg = (hi and 0x0f).toHex()
+                val rng = lo.toPositiveInt().toHex()
+                return Opcode(0,"$address","$higher$lower","rnd r$reg, #$rng")
+            }
+            0xD0 -> {
+                val reg1 = (hi and 0x0f).toHex()
+                val reg2 = ((lo.toPositiveInt() shl 4) and 0x0f)
+                val value = (lo and 0x0f).toHex()
+                return Opcode(0,"$address","$higher$lower","draw r$reg1,r$reg2,#$value")
+            }
+            0xE0 -> {
+                val reg = (hi and 0x0f).toHex()
+                when(lo.toPositiveInt() and 0xff){
+                    0xA1 -> return Opcode(0,"$address","$higher$lower","spre r$reg")
+                    0x07 -> return Opcode(0,"$address","$higher$lower","snpre r$reg")
+                    else -> return unknown()
+                }
+            }
             0xF0 -> return Opcode(0,"$address","$higher$lower","with F")
             else -> return unknown()
         }
