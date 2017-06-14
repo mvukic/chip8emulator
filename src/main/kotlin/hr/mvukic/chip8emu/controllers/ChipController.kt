@@ -4,6 +4,7 @@ import hr.mvukic.chip8emu.impl.Cpu
 import hr.mvukic.chip8emu.enums.ChipStatus
 import hr.mvukic.chip8emu.impl.Disassembler
 import hr.mvukic.chip8emu.impl.Memory
+import hr.mvukic.chip8emu.impl.Opcode
 import javafx.scene.input.KeyEvent
 import javafx.stage.FileChooser
 import tornadofx.*
@@ -39,7 +40,7 @@ class ChipController : Controller(){
         status = ChipStatus.RUNNING
     }
 
-    fun disassemble(): String{
+    fun disassemble(): List<Opcode>{
         return disassembler.disassemble(memory)
     }
 

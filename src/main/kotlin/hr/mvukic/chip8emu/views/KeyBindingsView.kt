@@ -7,7 +7,7 @@ import tornadofx.*
 /**
  * Created by matija on 12.06.17..
  */
-class KeyBindongsView : View("My View") {
+class KeyBindingsView : View("Key bindings view") {
 
     val keys: Map<String,String> by param()
 

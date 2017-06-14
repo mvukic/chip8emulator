@@ -1,6 +1,7 @@
 package hr.mvukic.chip8emu.interfaces
 
 import hr.mvukic.chip8emu.impl.Memory
+import hr.mvukic.chip8emu.impl.Opcode
 import java.io.File
 
 /**
@@ -8,5 +9,5 @@ import java.io.File
  */
 interface DisassemblerInterface {
 
-    fun disassemble(memory: Memory): String
+    fun disassemble(memory: Memory): List<Opcode>
 }

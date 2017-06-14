@@ -2,17 +2,11 @@ package hr.mvukic.chip8emu.views
 
 import hr.mvukic.chip8emu.controllers.ChipController
 import hr.mvukic.chip8emu.enums.ChipStatus
-import javafx.beans.Observable
 import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ObservableValue
-import javafx.event.EventHandler
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.input.KeyCombination
-import javafx.stage.FileChooser
 import tornadofx.*
-import tornadofx.FX.Companion.find
-import tornadofx.find
 import java.io.File
 
 /**
@@ -71,7 +65,8 @@ class ChipView : View(title = "Chip 8 Emulator") {
                             runAsync {
                                 chip.disassemble()
                             } ui{
-                                find<DisassembleView>(mapOf("assembly" to it)).openModal()
+                                println(it)
+                                find<DisassembleView>(mapOf("opcodes" to it)).openModal()
                             }
                         }else{
                             alert(Alert.AlertType.WARNING,"No ROM-s loaded","Please load a ROM file first!", ButtonType.OK)
@@ -82,7 +77,7 @@ class ChipView : View(title = "Chip 8 Emulator") {
             menu("Help"){
                 item("Keys"){
                     action{
-                        find<KeyBindongsView>(mapOf("keys" to chip.keys)).openModal()
+                        find<KeyBindingsView>(mapOf("keys" to chip.keys)).openModal()
                     }
                 }
                 item("About"){
