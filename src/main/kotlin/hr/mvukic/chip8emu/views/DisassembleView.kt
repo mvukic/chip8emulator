@@ -1,5 +1,6 @@
 package hr.mvukic.chip8emu.views
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import hr.mvukic.chip8emu.impl.Opcode
 import javafx.beans.property.SimpleListProperty
 import javafx.collections.FXCollections
