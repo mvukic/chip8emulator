@@ -15,11 +15,9 @@ class Disassembler: DisassemblerInterface{
     override fun disassemble(memory: Memory): List<Opcode> {
         operations.clear()
 
-        for(i in 80..memory.rom.size-1 step 2){
-            val op = opcodeParser.parse(i,memory.rom.get(i),memory.rom.get(i+1))
-            operations.add(op)
-
-        }
+        (80 until memory.rom.size step 2)
+                .map { opcodeParser.parse(it,memory.rom.get(it),memory.rom.get(it +1)) }
+                .forEach { operations.add(it) }
 
         return operations
     }

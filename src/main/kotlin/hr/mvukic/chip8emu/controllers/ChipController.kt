@@ -30,6 +30,7 @@ class ChipController : Controller(){
     fun loadRom(file: File){
         status = ChipStatus.WAITING
         memory.loadROMbytes(file.readBytes())
+        cpu.memory = memory
     }
 
     fun halt(){

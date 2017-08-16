@@ -24,11 +24,13 @@ class DisassembleView : Fragment("Disassembler view") {
                 menu("Save") {
                     item("json") {
                         action{
+                            // implement saving to json
                             println("Save to json")
                         }
                     }
                     item("csv"){
                         action{
+                            // implement saving to csv
                             println("Save to csv")
                         }
                     }

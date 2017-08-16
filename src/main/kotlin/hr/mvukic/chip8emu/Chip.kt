@@ -21,7 +21,7 @@ class Chip : App() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            Application.launch(Chip::class.java)
+            launch(Chip::class.java)
         }
     }
 }

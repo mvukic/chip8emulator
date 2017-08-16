@@ -65,7 +65,6 @@ class ChipView : View(title = "Chip 8 Emulator") {
                             runAsync {
                                 chip.disassemble()
                             } ui{
-                                println(it)
                                 find<DisassembleView>(mapOf("opcodes" to it)).openModal()
                             }
                         }else{
@@ -89,7 +88,7 @@ class ChipView : View(title = "Chip 8 Emulator") {
         }
 
         center = canvas {
-
+            //implement drawing
         }
 
         bottom = label{
