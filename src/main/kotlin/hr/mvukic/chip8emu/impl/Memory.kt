@@ -9,7 +9,7 @@ import kotlin.experimental.and
  */
 class Memory{
 
-    var rom:ByteArray = ByteArray(80)
+    var rom:ByteArray = ByteArray(1024 * 4)
     var size = 80;
     private val fontset: Array<Int> = arrayOf(
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0

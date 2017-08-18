@@ -39,6 +39,7 @@ class ChipController : Controller(){
 
     fun run(){
         status = ChipStatus.RUNNING
+        Thread.sleep(5_000)
     }
 
     fun disassemble(): List<Opcode>{

@@ -10,173 +10,170 @@ import kotlin.experimental.and
  */
 class Cpu {
 
-    var pc = 0;
+    var pc = 80 // program counter skips memory with fonts
     lateinit var memory:Memory
+    var screen = BooleanArray(64*32)
+    var stack = IntArray(16)
 
     fun run(){
-//        while(pc < memory.size){
-//            val opcode = opcodeParser.parse(i,memory.rom.get(i),memory.rom.get(i+1))
-//            var higher = hi.toPositiveInt().toHex().toUpperCase()
-//            var lower = lo.toPositiveInt().toHex().toUpperCase()
-//
-//            higher = if (higher.length == 1) "0$higher" else higher
-//            lower = if (lower.length == 1) "0$lower" else lower
-//
-//            val address = address(hi,lo)
-//
-//            when(hi.toPositiveInt() and 0xf0){
-//                0x00 -> when(lo.toPositiveInt()){
-//                    0xEE -> return Opcode(0,"$address","$higher$lower","ret")
-//                    0xE0 -> return Opcode(0,"$address","$higher$lower","cls")
-//                    else -> return Opcode(0,"$address","$higher$lower","DATA 0x$higher$lower")
-//                }
-//                0x10 -> {
-//                    val adr = (address and 0x0fff).toHex()
-//                    return Opcode(0,"$address","$higher$lower","jmp #$adr")
-//                }
-//                0x20 -> {
-//                    val adr = (address and 0x0fff).toHex()
-//                    return Opcode(0,"$address","$higher$lower","call $adr")
-//                }
-//                0x30 -> {
-//                    val value = lo.toPositiveInt().toHex()
-//                    val reg = (hi and 0x0f).toHex()
-//                    return Opcode(0,"$address","$higher$lower","seq r$reg #$value")
-//                }
-//                0x40 -> {
-//                    val value = lo.toPositiveInt().toHex()
-//                    val reg = (hi and 0x0f).toHex()
-//                    return Opcode(0,"$address","$higher$lower","sne r$reg #$value")
-//                }
-//                0x50 -> {
-//                    val reg1 = (hi and 0x0f).toHex()
-//                    val reg2 = (lo.toPositiveInt() shr 8).toHex()
-//                    return Opcode(0,"$address","$higher$lower","seq r$reg1 V$reg2")
-//                }
-//                0x60 -> {
-//                    val value = lo.toPositiveInt().toHex()
-//                    val reg = (hi and 0x0f).toHex()
-//                    return Opcode(0,"$address","$higher$lower","mov #$value, r$reg")
-//                }
-//                0x70 -> {
-//                    val value = lo.toPositiveInt().toHex()
-//                    val reg = (hi and 0x0f).toHex()
-//                    return Opcode(0,"$address","$higher$lower","add #$value, r$reg")
-//                }
-//                0x80 -> {
-//                    val x = (hi.toPositiveInt() and 0x0f).toHex()
-//                    val y = (lo.toPositiveInt() and 0xf0).toHex()
-//                    when(lo.toPositiveInt() and 0x0f){
-//                        0x00 ->{
-//                            return Opcode(0,"$address","$higher$lower","mov r$y, r$x")
-//                        }
-//                        0x01 -> {
-//                            return Opcode(0,"$address","$higher$lower","or r$x, r$y")
-//                        }
-//                        0x02 -> {
-//                            return Opcode(0,"$address","$higher$lower","and r$x, r$y")
-//                        }
-//                        0x03 -> {
-//                            return Opcode(0,"$address","$higher$lower","xor r$x, r$y")
-//                        }
-//                        0x04 -> {
-//                            return Opcode(0,"$address","$higher$lower","addc r$x, r$y")
-//                        }
-//                        0x05 -> {
-//                            return Opcode(0,"$address","$higher$lower","subc r$x, r$y")
-//                        }
-//                        0x06 -> {
-//                            return Opcode(0,"$address","$higher$lower","shr_store r$x, r$y")
-//                        }
-//                        0x07 -> {
-//                            return Opcode(0,"$address","$higher$lower","subc_store r$x, r$y")
-//                        }
-//                        0x0E -> {
-//                            return Opcode(0,"$address","$higher$lower","shl_store r$x, r$y")
-//                        }
-//                        else -> {
-//                            println("0x80")
-//                            return unknown()
-//                        }
-//                    }
-//                }
-//                0x90 -> {
-//                    val reg1 = (hi and 0x0f).toHex()
-//                    val reg2 = ((lo.toPositiveInt() shl 4) and 0x0f)
-//                    return Opcode(0,"$address","$higher$lower","seq r$reg1,r$reg2")
-//                }
-//                0xA0 -> {
-//                    val adr = (address and 0x0fff).toHex()
-//                    return Opcode(0,"$address","$higher$lower","mov I, #$adr")
-//                }
-//                0xB0 -> {
-//                    val adr = (address and 0x0fff).toHex()
-//                    return Opcode(0,"$address","$higher$lower","jmp #($adr+[r0])")
-//                }
-//                0xC0 -> {
-//                    val reg = (hi and 0x0f).toHex()
-//                    val rng = lo.toPositiveInt().toHex()
-//                    return Opcode(0,"$address","$higher$lower","rnd r$reg, #$rng")
-//                }
-//                0xD0 -> {
-//                    val reg1 = (hi and 0x0f).toHex()
-//                    val reg2 = ((lo.toPositiveInt() shl 4) and 0x0f)
-//                    val value = (lo and 0x0f).toHex()
-//                    return Opcode(0,"$address","$higher$lower","draw r$reg1,r$reg2,#$value")
-//                }
-//                0xE0 -> {
-//                    val reg = (hi and 0x0f).toHex()
-//                    when(lo.toPositiveInt() and 0xff){
-//                        0x9E -> return Opcode(0,"$address","$higher$lower","spre r$reg")
-//                        0xA1 -> return Opcode(0,"$address","$higher$lower","snpre r$reg")
-//                        else -> {
-//                            println("0xE0")
-//                            return unknown()
-//                        }
-//                    }
-//                }
-//                0xF0 -> {
-//                    val x = (hi.toPositiveInt() and 0x0f).toHex()
-//                    when(lo.toPositiveInt() and 0xff){
-//                        0xA1 -> {
-//                            return Opcode(0,"$address","$higher$lower","skip_key_pressed r$x")
-//                        }
-//                        0x07 -> {
-//                            return Opcode(0,"$address","$higher$lower","mov delay_timer, r$x")
-//                        }
-//                        0x0A -> {
-//                            return Opcode(0,"$address","$higher$lower","wait_key_press r$x")
-//                        }
-//                        0x15 -> {
-//                            return Opcode(0,"$address","$higher$lower","mov r$x,delay_timer")
-//                        }
-//                        0x18 -> {
-//                            return Opcode(0,"$address","$higher$lower","mov r$x,sound_timer")
-//                        }
-//                        0x1E -> {
-//                            return Opcode(0,"$address","$higher$lower","adds I,r$x")
-//                        }
-//                        0x29 -> {
-//                            return Opcode(0,"$address","$higher$lower","mov I,address of sprite value in r$x")
-//                        }
-//                        0x33 -> {
-//                            return Opcode(0,"$address","$higher$lower","mov_bdencoded I123,r$x")
-//                        }
-//                        0x55 -> {
-//                            return Opcode(0,"$address","$higher$lower","mov I+,V+")
-//                        }
-//                        0x65 -> {
-//                            return Opcode(0,"$address","$higher$lower","mov V+,I+")
-//                        }
-//                        else -> {
-//                            println("0xF0")
-//                            return unknown()
-//                        }
-//                    }
-//                }
-//                else -> return unknown()
-//            }
-//
-//        }
+        while(pc < memory.size){
+            val msb = memory.rom.get(pc)
+            val lsb = memory.rom.get(pc+1)
+
+            val address = address(msb,lsb)
+
+            when(msb.toPositiveInt() and 0xf0){
+                0x00 -> when(lsb.toPositiveInt()){
+                    0xEE -> {
+                        screen.fill(false)
+                    }
+                    0xE0 -> {}
+                    else -> {}
+                }
+                0x10 -> {
+                    val adr = (address and 0x0fff).toHex()
+
+                }
+                0x20 -> {
+                    val adr = (address and 0x0fff).toHex()
+
+                }
+                0x30 -> {
+                    val value = lsb.toPositiveInt().toHex()
+                    val reg = (msb and 0x0f).toHex()
+
+                }
+                0x40 -> {
+                    val value = lsb.toPositiveInt().toHex()
+                    val reg = (msb and 0x0f).toHex()
+
+                }
+                0x50 -> {
+                    val reg1 = (msb and 0x0f).toHex()
+                    val reg2 = (lsb.toPositiveInt() shr 8).toHex()
+
+                }
+                0x60 -> {
+                    val value = lsb.toPositiveInt().toHex()
+                    val reg = (msb and 0x0f).toHex()
+
+                }
+                0x70 -> {
+                    val value = lsb.toPositiveInt().toHex()
+                    val reg = (msb and 0x0f).toHex()
+
+                }
+                0x80 -> {
+                    val x = (msb.toPositiveInt() and 0x0f).toHex()
+                    val y = (lsb.toPositiveInt() and 0xf0).toHex()
+                    when(lsb.toPositiveInt() and 0x0f){
+                        0x00 ->{
+
+                        }
+                        0x01 -> {
+
+                        }
+                        0x02 -> {
+
+                        }
+                        0x03 -> {
+
+                        }
+                        0x04 -> {
+
+                        }
+                        0x05 -> {
+
+                        }
+                        0x06 -> {
+
+                        }
+                        0x07 -> {
+
+                        }
+                        0x0E -> {
+
+                        }
+                        else -> {
+
+                        }
+                    }
+                }
+                0x90 -> {
+                    val reg1 = (msb and 0x0f).toHex()
+                    val reg2 = ((lsb.toPositiveInt() shl 4) and 0x0f)
+
+                }
+                0xA0 -> {
+                    val adr = (address and 0x0fff).toHex()
+
+                }
+                0xB0 -> {
+                    val adr = (address and 0x0fff).toHex()
+
+                }
+                0xC0 -> {
+                    val reg = (msb and 0x0f).toHex()
+                    val rng = lsb.toPositiveInt().toHex()
+
+                }
+                0xD0 -> {
+                    val reg1 = (msb and 0x0f).toHex()
+                    val reg2 = ((lsb.toPositiveInt() shl 4) and 0x0f)
+                    val value = (lsb and 0x0f).toHex()
+
+                }
+                0xE0 -> {
+                    val reg = (msb and 0x0f).toHex()
+                    when(lsb.toPositiveInt() and 0xff){
+                        0x9E -> {}
+                        0xA1 -> {}
+                        else -> {
+
+                        }
+                    }
+                }
+                0xF0 -> {
+                    val x = (msb.toPositiveInt() and 0x0f).toHex()
+                    when(lsb.toPositiveInt() and 0xff){
+                        0xA1 -> {
+
+                        }
+                        0x07 -> {
+
+                        }
+                        0x0A -> {
+
+                        }
+                        0x15 -> {
+
+                        }
+                        0x18 -> {
+
+                        }
+                        0x1E -> {
+
+                        }
+                        0x29 -> {
+
+                        }
+                        0x33 -> {
+
+                        }
+                        0x55 -> {
+
+                        }
+                        0x65 -> {
+
+                        }
+                        else -> {
+
+                        }
+                    }
+                }
+                else -> {}
+            }
+
+        }
     }
 }

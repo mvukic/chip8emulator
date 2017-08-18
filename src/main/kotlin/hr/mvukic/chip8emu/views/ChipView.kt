@@ -46,7 +46,13 @@ class ChipView : View(title = "Chip 8 Emulator") {
                     action {
                         status.set("Running...")
                         runAsync {
-                            chip.run()
+                             chip.run()
+                        } ui {
+                            alert(
+                                    type = Alert.AlertType.CONFIRMATION,
+                                    header = "Message",
+                                    content = "Program ended."
+                            )
                         }
                     }
                 }
