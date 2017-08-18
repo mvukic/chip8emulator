@@ -1,5 +1,6 @@
 package hr.mvukic.chip8emu.controllers
 
+import hr.mvukic.chip8emu.array2dOfBoolean
 import hr.mvukic.chip8emu.impl.Cpu
 import hr.mvukic.chip8emu.enums.ChipStatus
 import hr.mvukic.chip8emu.impl.Disassembler
@@ -18,6 +19,7 @@ class ChipController : Controller(){
 
     var memory: Memory = Memory()
     var cpu: Cpu = Cpu()
+    var screen:Array<BooleanArray> = array2dOfBoolean(32,64)
     var disassembler :Disassembler = Disassembler()
     var status: ChipStatus = ChipStatus.INIT
     val keys:Map<String,String> = mapOf(
@@ -26,6 +28,9 @@ class ChipController : Controller(){
             "c" to "d",
             "stop" to "ctrl+h",
             "run" to "ctrl+r")
+    init {
+        cpu.screen =  screen
+    }
 
     fun loadRom(file: File){
         status = ChipStatus.WAITING
@@ -34,12 +39,13 @@ class ChipController : Controller(){
     }
 
     fun halt(){
+        cpu.running = false
         status = ChipStatus.STOPPED
     }
 
     fun run(){
         status = ChipStatus.RUNNING
-        Thread.sleep(5_000)
+        cpu.run()
     }
 
     fun disassemble(): List<Opcode>{

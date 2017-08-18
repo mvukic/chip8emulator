@@ -25,3 +25,6 @@ fun Byte.toHex() = Integer.toHexString(this.toInt())!!
 fun Byte.toPositiveInt() = toInt() and 0xFF
 
 fun address(msb: Byte, lsb: Byte) = ((msb.toInt() and 0xf) shl 8) or (lsb.toInt() and 0xff)
+
+fun array2dOfBoolean(sizeOuter: Int, sizeInner: Int): Array<BooleanArray>
+        = Array(sizeOuter) { BooleanArray(sizeInner) }
