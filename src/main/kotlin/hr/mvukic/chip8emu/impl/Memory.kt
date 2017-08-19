@@ -9,8 +9,10 @@ import kotlin.experimental.and
  */
 class Memory{
 
-    var rom:ByteArray = ByteArray(1024 * 4)
-    var size = 80;
+    var memory: ByteArray = ByteArray(1024 * 4) // 4kb of memory
+    var rom:ByteArray = ByteArray(80)
+    var size = 0
+
     private val fontset: Array<Int> = arrayOf(
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -30,16 +32,21 @@ class Memory{
         0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     )
 
+    init{
+        initFonts()
+    }
+
     private fun initFonts(){
-        for(i in 0 until rom.size){
-            rom.set(i, fontset[i].toByte())
+        for(i in 0 until 80){
+            memory.set(i, fontset[i].toByte())
         }
+        this.size += 80
     }
 
     fun loadROMbytes(byteArray: ByteArray){
-        initFonts()
-        rom = (rom.asList() + byteArray.asList()).toByteArray()
-        this.size = rom.size
+        rom = byteArray
+        memory = (memory.asList() + rom.asList()).toByteArray()
+        this.size += rom.size
     }
 
 

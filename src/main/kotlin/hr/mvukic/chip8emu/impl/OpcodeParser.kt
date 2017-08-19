@@ -6,6 +6,7 @@ import hr.mvukic.chip8emu.toPositiveInt
 import unsigned.toUbyte
 import kotlin.experimental.and
 
+// TODO: fix addres value
 class OpcodeParser{
 
     fun parse(indexInMemory:Int, hi:Byte, lo:Byte): Opcode{

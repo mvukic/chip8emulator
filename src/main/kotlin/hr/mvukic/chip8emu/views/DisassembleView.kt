@@ -5,8 +5,10 @@ import hr.mvukic.chip8emu.impl.Opcode
 import javafx.beans.property.SimpleListProperty
 import javafx.collections.FXCollections
 import javafx.scene.input.KeyCombination
+import javafx.stage.FileChooser
 import tornadofx.*
 import java.io.File
+import javax.json.JsonObject
 
 /**
  * Created by matija on 10.06.17..
@@ -24,8 +26,16 @@ class DisassembleView : Fragment("Disassembler view") {
                 menu("Save") {
                     item("json") {
                         action{
-                            // implement saving to json
-                            println("Save to json")
+                            val json = opcodes.map { it.toJSON() }.toString()
+                            val files = chooseFile(
+                                    title = "Save disassembly",
+                                    mode = FileChooserMode.Save,
+                                    filters = arrayOf(FileChooser.ExtensionFilter("*.json","*.json"))
+                            )
+                            if(files.size == 1){
+                                files.get(0).writeText(json)
+                            }
+
                         }
                     }
                     item("csv"){

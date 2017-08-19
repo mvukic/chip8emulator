@@ -48,9 +48,7 @@ class ChipController : Controller(){
         cpu.run()
     }
 
-    fun disassemble(): List<Opcode>{
-        return disassembler.disassemble(memory)
-    }
+    fun disassemble() =  disassembler.disassemble(memory)
 
     fun fileFilters() = arrayOf(
             FileChooser.ExtensionFilter("*.rom","*.rom"),

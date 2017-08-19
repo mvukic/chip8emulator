@@ -9,14 +9,14 @@ import java.io.File
 
 class Disassembler: DisassemblerInterface{
 
-    val opcodeParser:OpcodeParser = OpcodeParser()
-    var operations: MutableList<Opcode> = mutableListOf()
+    private val opcodeParser:OpcodeParser = OpcodeParser()
+    private var operations: MutableList<Opcode> = mutableListOf()
 
     override fun disassemble(memory: Memory): List<Opcode> {
         operations.clear()
 
         (80 until memory.rom.size step 2)
-                .map { opcodeParser.parse(it,memory.rom.get(it),memory.rom.get(it +1)) }
+                .map { opcodeParser.parse(it,memory.rom.get(it),memory.rom.get(it + 1)) }
                 .forEach { operations.add(it) }
 
         return operations

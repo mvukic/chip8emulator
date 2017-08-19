@@ -123,6 +123,7 @@ class ChipView : View(title = "Chip 8 Emulator") {
                         }
                     }
                 }
+
             }
             menu("Help"){
                 item("Keys"){
