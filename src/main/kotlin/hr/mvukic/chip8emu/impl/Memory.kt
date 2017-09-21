@@ -1,16 +1,15 @@
 package hr.mvukic.chip8emu.impl
 
-import hr.mvukic.chip8emu.toHex
-import hr.mvukic.chip8emu.toPositiveInt
-import kotlin.experimental.and
+import hr.mvukic.chip8emu.interfaces.IMemory
 
 /**
  * Created by matija on 08.06.17..
  */
-class Memory{
+class Memory : IMemory{
 
     var memory: ByteArray = ByteArray(1024 * 4) // 4kb of memory
-    var rom:ByteArray = ByteArray(80)
+    var rom: ByteArray = ByteArray(80) //fonts
+    // Initial fonts size + size of loaded ROM
     var size = 0
 
     private val fontset: Array<Int> = arrayOf(
@@ -36,6 +35,10 @@ class Memory{
         initFonts()
     }
 
+    override fun read(index: Int) = memory.get(index)
+
+    override fun write(index: Int, value: Byte) = memory.set(index,value)
+
     private fun initFonts(){
         for(i in 0 until 80){
             memory.set(i, fontset[i].toByte())
@@ -46,7 +49,7 @@ class Memory{
     fun loadROMbytes(byteArray: ByteArray){
         rom = byteArray
         memory = (memory.asList() + rom.asList()).toByteArray()
-        this.size += rom.size
+        this.size += byteArray.size
     }
 
 

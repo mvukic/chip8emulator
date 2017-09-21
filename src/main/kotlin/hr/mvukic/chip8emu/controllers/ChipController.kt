@@ -1,12 +1,9 @@
 package hr.mvukic.chip8emu.controllers
 
-import hr.mvukic.chip8emu.array2dOfBoolean
 import hr.mvukic.chip8emu.impl.Cpu
 import hr.mvukic.chip8emu.enums.ChipStatus
-import hr.mvukic.chip8emu.impl.Disassembler
 import hr.mvukic.chip8emu.impl.Memory
-import hr.mvukic.chip8emu.impl.Opcode
-import javafx.scene.input.KeyEvent
+import javafx.beans.property.SimpleStringProperty
 import javafx.stage.FileChooser
 import tornadofx.*
 import java.io.File
@@ -18,37 +15,39 @@ import java.io.File
 class ChipController : Controller(){
 
     var memory: Memory = Memory()
-    var cpu: Cpu = Cpu()
-    var screen:Array<BooleanArray> = array2dOfBoolean(32,64)
-    var disassembler :Disassembler = Disassembler()
+    var cpu: Cpu = Cpu(memory)
     var status: ChipStatus = ChipStatus.INIT
+    var statusText = SimpleStringProperty("Init")
+
     val keys:Map<String,String> = mapOf(
             "a" to "b",
             "b" to "c",
             "c" to "d",
             "stop" to "ctrl+h",
             "run" to "ctrl+r")
-    init {
-        cpu.screen =  screen
-    }
 
     fun loadRom(file: File){
         status = ChipStatus.WAITING
-        memory.loadROMbytes(file.readBytes())
-        cpu.memory = memory
+        // auto closable
+        with(file){
+            memory.loadROMbytes(readBytes())
+        }
+        statusText.set("Loaded file: "+file.name)
     }
 
     fun halt(){
-        cpu.running = false
+        cpu.halt()
         status = ChipStatus.STOPPED
+        statusText.set("Stopped")
     }
 
     fun run(){
+        cpu.start()
         status = ChipStatus.RUNNING
-        cpu.run()
+        statusText.set("RUNNING")
     }
 
-    fun disassemble() =  disassembler.disassemble(memory)
+    fun disassemble() =  cpu.disassemble()
 
     fun fileFilters() = arrayOf(
             FileChooser.ExtensionFilter("*.rom","*.rom"),

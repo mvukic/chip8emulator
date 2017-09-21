@@ -1,192 +1,125 @@
 package hr.mvukic.chip8emu.impl
 
-import hr.mvukic.chip8emu.address
-import hr.mvukic.chip8emu.array2dOfBoolean
-import hr.mvukic.chip8emu.toHex
-import hr.mvukic.chip8emu.toPositiveInt
-import java.util.concurrent.ThreadLocalRandom
-import kotlin.experimental.and
+import hr.mvukic.chip8emu.*
+import hr.mvukic.chip8emu.interfaces.ICPU
+import hr.mvukic.chip8emu.interfaces.IDecoder
 
 /**
  * Created by matija on 08.06.17..
  */
-class Cpu {
+class Cpu(private var memory: Memory) : ICPU {
 
-    var pc = 80 // program counter skips memory with fonts
-    lateinit var memory:Memory
-    lateinit var screen: Array<BooleanArray>
-    var stack = IntArray(16)
+    // flags, registers and counters
+    val stack: IntArray = IntArray(16)
+    var sp: Int = 0
+    val registers: ByteArray = ByteArray(16)
+    var delay: Int = 0
+    var sound: Int = 0
+    val keys: ByteArray = ByteArray(16)
+    var pc: Int = 0x200
+
+    val disassembler: IDecoder = Disassembler()
+
+    // indicates if CPU should run
     var running = true
 
-    fun run(){
+    override fun start() {
+        // make this async
+        println("Running")
         while(running){
-            val row = ThreadLocalRandom.current().nextInt(0,32)
-            val col = ThreadLocalRandom.current().nextInt(0,64)
-            println("$row $col")
-            screen.get(row).set(col,true)
-            Thread.sleep(2000)
+            // cycle()
         }
+        println("Stopped")
+    }
 
-//        while(pc < memory.size){
-//            val msb = memory.rom.get(pc)
-//            val lsb = memory.rom.get(pc+1)
-//
-//            val address = address(msb,lsb)
-//
-//            when(msb.toPositiveInt() and 0xf0){
-//                0x00 -> when(lsb.toPositiveInt()){
-//                    0xEE -> {
-//                        screen.forEach {
-//                            it.fill(false)
-//                        }
-//                    }
-//                    0xE0 -> {}
-//                    else -> {}
-//                }
-//                0x10 -> {
-//                    val adr = (address and 0x0fff).toHex()
-//
-//                }
-//                0x20 -> {
-//                    val adr = (address and 0x0fff).toHex()
-//
-//                }
-//                0x30 -> {
-//                    val value = lsb.toPositiveInt().toHex()
-//                    val reg = (msb and 0x0f).toHex()
-//
-//                }
-//                0x40 -> {
-//                    val value = lsb.toPositiveInt().toHex()
-//                    val reg = (msb and 0x0f).toHex()
-//
-//                }
-//                0x50 -> {
-//                    val reg1 = (msb and 0x0f).toHex()
-//                    val reg2 = (lsb.toPositiveInt() shr 8).toHex()
-//
-//                }
-//                0x60 -> {
-//                    val value = lsb.toPositiveInt().toHex()
-//                    val reg = (msb and 0x0f).toHex()
-//
-//                }
-//                0x70 -> {
-//                    val value = lsb.toPositiveInt().toHex()
-//                    val reg = (msb and 0x0f).toHex()
-//
-//                }
-//                0x80 -> {
-//                    val x = (msb.toPositiveInt() and 0x0f).toHex()
-//                    val y = (lsb.toPositiveInt() and 0xf0).toHex()
-//                    when(lsb.toPositiveInt() and 0x0f){
-//                        0x00 ->{
-//
-//                        }
-//                        0x01 -> {
-//
-//                        }
-//                        0x02 -> {
-//
-//                        }
-//                        0x03 -> {
-//
-//                        }
-//                        0x04 -> {
-//
-//                        }
-//                        0x05 -> {
-//
-//                        }
-//                        0x06 -> {
-//
-//                        }
-//                        0x07 -> {
-//
-//                        }
-//                        0x0E -> {
-//
-//                        }
-//                        else -> {
-//
-//                        }
-//                    }
-//                }
-//                0x90 -> {
-//                    val reg1 = (msb and 0x0f).toHex()
-//                    val reg2 = ((lsb.toPositiveInt() shl 4) and 0x0f)
-//
-//                }
-//                0xA0 -> {
-//                    val adr = (address and 0x0fff).toHex()
-//
-//                }
-//                0xB0 -> {
-//                    val adr = (address and 0x0fff).toHex()
-//
-//                }
-//                0xC0 -> {
-//                    val reg = (msb and 0x0f).toHex()
-//                    val rng = lsb.toPositiveInt().toHex()
-//
-//                }
-//                0xD0 -> {
-//                    val reg1 = (msb and 0x0f).toHex()
-//                    val reg2 = ((lsb.toPositiveInt() shl 4) and 0x0f)
-//                    val value = (lsb and 0x0f).toHex()
-//
-//                }
-//                0xE0 -> {
-//                    val reg = (msb and 0x0f).toHex()
-//                    when(lsb.toPositiveInt() and 0xff){
-//                        0x9E -> {}
-//                        0xA1 -> {}
-//                        else -> {
-//
-//                        }
-//                    }
-//                }
-//                0xF0 -> {
-//                    val x = (msb.toPositiveInt() and 0x0f).toHex()
-//                    when(lsb.toPositiveInt() and 0xff){
-//                        0xA1 -> {
-//
-//                        }
-//                        0x07 -> {
-//
-//                        }
-//                        0x0A -> {
-//
-//                        }
-//                        0x15 -> {
-//
-//                        }
-//                        0x18 -> {
-//
-//                        }
-//                        0x1E -> {
-//
-//                        }
-//                        0x29 -> {
-//
-//                        }
-//                        0x33 -> {
-//
-//                        }
-//                        0x55 -> {
-//
-//                        }
-//                        0x65 -> {
-//
-//                        }
-//                        else -> {
-//
-//                        }
-//                    }
-//                }
-//                else -> {}
-//            }
-//
-//        }
+    override fun halt() {
+        running = false;
+    }
+
+    override fun disassemble(): List<Opcode> {
+
+        val decoder = Disassembler()
+        (80 until memory.rom.size step 2)
+                .forEach {
+                    decode(decoder,it,memory.rom.get(it),memory.rom.get(it + 1))
+                    decoder.after()
+                }
+
+
+        return decoder.operations
+    }
+
+    fun decode(decoder: IDecoder, address: Int, msb:Byte, lsb: Byte){
+        val opCode = (msb.toInt() shl 8 or lsb.toInt().and(0xff)).and(0xffff)
+        decoder.before(opCode, address)
+        println( "${msb.high()} ${msb.low()}")
+        when (msb.high()) {
+            0x0 -> {
+                when (msb.toPositiveInt() shl 8 or lsb.toPositiveInt()) {
+                    0x00e0 -> decoder.clear()
+                    0x00ee -> decoder.ret()
+                    else -> decoder.unknown(opCode, address)
+                }
+            }
+            0x1 -> decoder.jmp(address(msb, lsb))
+            0x2 -> decoder.call(address(msb, lsb))
+            0x3 -> decoder.jeq(msb.low(), lsb.toInt())
+            0x4 -> decoder.jneq(msb.low(), lsb.toInt())
+            0x5 -> decoder.jeqr(msb.low(), lsb.high())
+            0x6 -> decoder.set(msb.low(), lsb.toInt())
+            0x7 -> decoder.add(msb.low(), lsb.toInt())
+            0x8 -> {
+                val reg1 = msb.low()
+                val reg2 = lsb.high()
+                when(lsb.low()) {
+                    0x0 -> decoder.setr(reg1, reg2)
+                    0x1 -> decoder.or(reg1, reg2)
+                    0x2 -> decoder.and(reg1, reg2)
+                    0x3 -> decoder.xor(reg1, reg2)
+                    0x4 -> decoder.addr(reg1, reg2)
+                    0x5 -> decoder.sub(reg1, reg2)
+                    0x6 -> decoder.shr(reg1)
+                    0x7 -> decoder.subb(reg1, reg2)
+                    0xe -> decoder.shl(reg1)
+                    else -> decoder.unknown(opCode, address)
+                }
+            }
+            0x9 -> {
+                val reg1 = msb.low()
+                val reg2 = lsb.high()
+                decoder.jneqr(reg1, reg2)
+            }
+            0xa -> decoder.seti(address(msb, lsb))
+            0xb -> decoder.jmpv0(address(msb, lsb))
+            0xc -> decoder.rand(msb.low(), lsb.toPositiveInt())
+            0xd -> decoder.draw(msb.low(), lsb.high(), lsb.low())
+            0xe -> {
+                when(lsb.toInt() or 0xff) {
+                    0x9e -> decoder.jkey(msb.low())
+                    0xa1 -> decoder.jnkey(msb.low())
+                    else -> decoder.unknown(opCode, address)
+                }
+            }
+            0xf -> {
+                val reg = msb.low()
+                when(lsb.toInt() or 0xff) {
+                    0x07 -> decoder.getdelay(reg)
+                    0x0a -> decoder.waitkey(reg)
+                    0x15 -> decoder.setdelay(reg)
+                    0x18 -> decoder.setsound(reg)
+                    0x1e -> decoder.addi(reg)
+                    0x29 -> decoder.spritei(reg)
+                    0x33 -> decoder.bcd(reg)
+                    0x55 -> decoder.push(reg)
+                    0x65 -> decoder.pop(reg)
+                    else -> decoder.unknown(opCode, address)
+                }
+            }
+            else -> decoder.unknown(opCode, address)
+        }
+    }
+
+    override fun cycle(){
+
     }
 }
