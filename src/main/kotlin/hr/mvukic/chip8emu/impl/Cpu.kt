@@ -10,49 +10,49 @@ import hr.mvukic.chip8emu.interfaces.IDecoder
 class Cpu(private var memory: Memory) : ICPU {
 
     // flags, registers and counters
-    val stack: IntArray = IntArray(16)
-    var sp: Int = 0
-    val registers: ByteArray = ByteArray(16)
-    var delay: Int = 0
-    var sound: Int = 0
-    val keys: ByteArray = ByteArray(16)
-    var pc: Int = 0x200
-
-    val disassembler: IDecoder = Disassembler()
+    private var state: VmState = VmState(
+            mem = this.memory,
+            stack = IntArray(16),
+            sp = 0,
+            registers = ByteArray(16),
+            I = 0,
+            delay = 0,
+            sound = 0,
+            keys = ByteArray(16),
+            pc = 80
+    )
 
     // indicates if CPU should run
     var running = true
 
     override fun start() {
-        // make this async
+        val decoder = Decoder(state)
         println("Running")
+
+        // ASYNC!!
         while(running){
-            // cycle()
+            decode(decoder,state.pc+80,memory.read(state.pc),memory.read(state.pc + 1))
         }
+
         println("Stopped")
     }
 
     override fun halt() {
-        running = false;
+        running = false
     }
 
     override fun disassemble(): List<Opcode> {
-
         val decoder = Disassembler()
-        (80 until memory.rom.size step 2)
-                .forEach {
-                    decode(decoder,it,memory.rom.get(it),memory.rom.get(it + 1))
-                    decoder.after()
-                }
-
-
+        for(i in 80 until memory.size step 2) {
+            decode(decoder,i,memory.read(i),memory.read(i + 1))
+            decoder.after()
+        }
         return decoder.operations
     }
 
     fun decode(decoder: IDecoder, address: Int, msb:Byte, lsb: Byte){
-        val opCode = (msb.toInt() shl 8 or lsb.toInt().and(0xff)).and(0xffff)
+        val opCode = (msb.toInt() shl 8 or lsb.toPositiveInt()).and(0xffff)
         decoder.before(opCode, address)
-        println( "${msb.high()} ${msb.low()}")
         when (msb.high()) {
             0x0 -> {
                 when (msb.toPositiveInt() shl 8 or lsb.toPositiveInt()) {
@@ -63,11 +63,11 @@ class Cpu(private var memory: Memory) : ICPU {
             }
             0x1 -> decoder.jmp(address(msb, lsb))
             0x2 -> decoder.call(address(msb, lsb))
-            0x3 -> decoder.jeq(msb.low(), lsb.toInt())
-            0x4 -> decoder.jneq(msb.low(), lsb.toInt())
+            0x3 -> decoder.jeq(msb.low(), lsb.toPositiveInt())
+            0x4 -> decoder.jneq(msb.low(), lsb.toPositiveInt())
             0x5 -> decoder.jeqr(msb.low(), lsb.high())
-            0x6 -> decoder.set(msb.low(), lsb.toInt())
-            0x7 -> decoder.add(msb.low(), lsb.toInt())
+            0x6 -> decoder.set(msb.low(), lsb.toPositiveInt())
+            0x7 -> decoder.add(msb.low(), lsb.toPositiveInt())
             0x8 -> {
                 val reg1 = msb.low()
                 val reg2 = lsb.high()
@@ -94,7 +94,7 @@ class Cpu(private var memory: Memory) : ICPU {
             0xc -> decoder.rand(msb.low(), lsb.toPositiveInt())
             0xd -> decoder.draw(msb.low(), lsb.high(), lsb.low())
             0xe -> {
-                when(lsb.toInt() or 0xff) {
+                when(lsb.toPositiveInt()) {
                     0x9e -> decoder.jkey(msb.low())
                     0xa1 -> decoder.jnkey(msb.low())
                     else -> decoder.unknown(opCode, address)
@@ -102,7 +102,7 @@ class Cpu(private var memory: Memory) : ICPU {
             }
             0xf -> {
                 val reg = msb.low()
-                when(lsb.toInt() or 0xff) {
+                when(lsb.toInt()) {
                     0x07 -> decoder.getdelay(reg)
                     0x0a -> decoder.waitkey(reg)
                     0x15 -> decoder.setdelay(reg)

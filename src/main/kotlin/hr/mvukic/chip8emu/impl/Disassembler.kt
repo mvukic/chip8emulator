@@ -25,7 +25,7 @@ class Disassembler : IDecoder {
     }
 
     override fun unknown(opCode: Int, address: Int) {
-        command = "Unknown opcode addr: 0x${address.toHex()}, op: 0x${opCode.toHex()}"
+        command = "DATA addr: 0x${address.toHex()}, op: 0x${opCode.toHex()}"
         builder.append(command)
     }
 

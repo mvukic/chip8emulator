@@ -10,14 +10,6 @@ import tornadofx.property
  */
 class Opcode(var index:Int=0,var address:String="",var hex:String="", var command:String=""): JsonModel{
 
-
-
-    fun addressProperty() = getProperty(Opcode::address)
-
-    fun hexProperty() = getProperty(Opcode::hex)
-
-    fun commandProperty() = getProperty(Opcode::command)
-
     override fun toJSON(json: JsonBuilder) {
         with(json){
             add("index",index)

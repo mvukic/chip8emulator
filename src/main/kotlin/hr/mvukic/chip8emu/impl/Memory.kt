@@ -7,8 +7,9 @@ import hr.mvukic.chip8emu.interfaces.IMemory
  */
 class Memory : IMemory{
 
-    var memory: ByteArray = ByteArray(1024 * 4) // 4kb of memory
-    var rom: ByteArray = ByteArray(80) //fonts
+    private var memory: ByteArray = ByteArray(1024 * 4) // 4kb of memory
+    private var rom: ByteArray = ByteArray(80) // only loaded rom data
+
     // Initial fonts size + size of loaded ROM
     var size = 0
 
@@ -32,24 +33,37 @@ class Memory : IMemory{
     )
 
     init{
-        initFonts()
+        reset()
     }
 
-    override fun read(index: Int) = memory.get(index)
+    override fun read(index: Int) = memory[index]
 
     override fun write(index: Int, value: Byte) = memory.set(index,value)
 
-    private fun initFonts(){
-        for(i in 0 until 80){
-            memory.set(i, fontset[i].toByte())
+    fun reset(){
+        size = 0
+        for(i in 0 until memory.size){
+            memory[i] = 0
         }
-        this.size += 80
+        initFonts()
     }
 
-    fun loadROMbytes(byteArray: ByteArray){
-        rom = byteArray
-        memory = (memory.asList() + rom.asList()).toByteArray()
-        this.size += byteArray.size
+    private fun initFonts(){
+        for(i in 0 until this.fontset.size){
+            write(i, fontset[i].toByte())
+        }
+        this.size += this.fontset.size
+        println("Memory size: $size")
+    }
+
+    fun loadROMbytes(romBytes: ByteArray){
+        reset()
+        rom = romBytes
+        for(i in 0 until romBytes.size){
+            write(i+80, romBytes[i])
+        }
+        this.size += romBytes.size
+        println("Memory size: $size")
     }
 
 
