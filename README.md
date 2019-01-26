@@ -1,6 +1,6 @@
 # chip8emu
 
-Chip 8 emulator in Java
+Chip 8 emulator in Kotlin
 
 ## Resources:
 
